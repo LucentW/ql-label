@@ -103,7 +103,8 @@ The library features improved print completion monitoring with smart status poll
 
 ## Hardware Integration Notes
 
-- **Kernel Driver Handling**: QL-800 requires kernel driver detachment, QL-820NWB does not
+- **Kernel Driver Handling**: QL-800 and QL-500 require kernel driver detachment (`usblp`), QL-820NWB does not
+- **Legacy Models (QL-500)**: No cutter, no compression, no `ESC i a`/`ESC i !`/`ESC i K`/`ESC i M`/`ESC i A`; these are skipped based on `Model` capability methods (`has_cutter()`, `supports_mode_setting()`, `supports_expanded_mode()`, `supports_compression()`). Status model code is 0x4F (shared with QL-550) and tape color byte 25 is reported as 0x00
 - **USB Timeout**: Long labels (>1000mm) may cause USB timeout errors
 - **Media Detection**: Printer automatically detects installed media tape, verified against config
 - **Two-Color Support**: Requires alternating raster line commands for red/black printing
@@ -149,5 +150,6 @@ let two_color_data = convert_rgb_to_two_color(width, height, &rgb_data)?;
 Labels must be provided as `Matrix` type (`Vec<Vec<u8>>`):
 - Width: 720px for normal printers, 1296px for wide printers
 - 1-bit bitmap data packed into bytes (8 pixels per byte)
-- Use `step_filter_normal()` utility to convert grayscale images
+- Use `step_filter_normal()` utility to convert grayscale images (threshold)
+- Use `dither_filter_normal()` for photos/gradients (Floyd–Steinberg dithering; printers are 1-bit only)
 - Content positioning depends on media width (see media specifications)
